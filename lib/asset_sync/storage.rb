@@ -6,6 +6,7 @@ module AssetSync
   class Storage
     REGEXP_FINGERPRINTED_FILES = /^(.*)\/([^-]+)-[^\.]+\.([^\.]+)$/
     REGEXP_ASSETS_TO_CACHE_CONTROL = /-[0-9a-fA-F]{32,}$/
+    DEFAULT_MIME_TYPE='application/octet-stream'
 
     class BucketNotFound < StandardError;
     end
@@ -142,7 +143,7 @@ module AssetSync
       # TODO output files in debug logs as asset filename only.
       one_year = 31557600
       ext = File.extname(f)[1..-1]
-      mime = MultiMime.lookup(ext)
+      mime = ext ? MultiMime.lookup(ext) : DEFAULT_MIME_TYPE
       gzip_file_handle = nil
       file_handle = File.open("#{path}/#{f}")
       file = {
