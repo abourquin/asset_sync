@@ -42,6 +42,21 @@ module AssetSync
       expand_file_names(self.config.ignored_files)
     end
 
+    def download_manifest
+      FileUtils.mkdir_p(File.dirname(self.config.manifest_path))
+      log "AssetSync: Delete old manifest file."
+      File.delete(self.config.manifest_path) if File.exist?(self.config.manifest_path)
+      log "AssetSync: Downloading manifest file."
+      File.open(self.config.manifest_path, 'w') do |local_file|
+        if (manifest = bucket.files.get(get_manifest_path.pop).try(:body))
+          local_file.write(manifest)
+          log "AssetSync: Manifest file successfully imported."
+        else
+          log "AssetSync: Manifest file is empty."
+        end
+      end
+    end
+
     def get_manifest_path
       return [] unless self.config.include_manifest
         

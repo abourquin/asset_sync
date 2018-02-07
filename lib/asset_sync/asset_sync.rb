@@ -36,6 +36,12 @@ module AssetSync
       end
     end
 
+    def download_manifest
+      with_config do
+        self.storage.download_manifest
+      end
+    end
+
     def with_config(&block)
       return unless AssetSync.enabled?
 
